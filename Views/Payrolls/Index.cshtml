@@ -1,0 +1,192 @@
+@model IEnumerable<TechCoreSolutions.Models.Payroll>
+
+@{
+    ViewData["Title"] = "Payroll Management";
+}
+
+<div class="container-fluid px-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-primary mb-0">Payroll Management</h1>
+            <p class="text-muted small">Track and manage employee compensation records</p>
+        </div>
+        <button onclick="openModal('@Url.Action("Create")')" class="btn btn-success shadow-sm px-4 py-2">
+            <i class="bi bi-plus-circle-fill me-2"></i> Add Payroll Record
+        </button>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4 bg-light">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-2">
+                <div class="col-md-5">
+                    <select name="employeeId" class="form-select shadow-none" onchange="this.form.submit()">
+                        <option value="">All Employees</option>
+                        @foreach (var emp in (List<TechCoreSolutions.Models.Employee>)ViewBag.Employees ?? new List<TechCoreSolutions.Models.Employee>())
+                        {
+                            if (emp.EmployeeID == (int?)ViewData["CurrentEmployee"])
+                            {
+                                <option value="@emp.EmployeeID" selected>@emp.FullName</option>
+                            }
+                            else
+                            {
+                                <option value="@emp.EmployeeID">@emp.FullName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="month" class="form-select shadow-none" onchange="this.form.submit()">
+                        <option value="">All Months</option>
+                        @{
+                            var months = System.Globalization.DateTimeFormatInfo.InvariantInfo.MonthNames;
+                            for (int i = 0; i < 12; i++)
+                            {
+                                if (i + 1 == (int?)ViewData["CurrentMonth"])
+                                {
+                                    <option value="@(i+1)" selected>@months[i]</option>
+                                }
+                                else
+                                {
+                                    <option value="@(i+1)">@months[i]</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">Filter Records</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100 rounded-4">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase opacity-75 small fw-bold">Total Net Payout</h6>
+                    <h2 class="fw-bold mb-0">₱ @Model.Sum(p => p.NetPay).ToString("N2")</h2>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-white h-100 rounded-4 border-start border-danger border-5">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted small fw-bold">Total Deductions</h6>
+                    <h2 class="fw-bold mb-0 text-danger">₱ @Model.Sum(p => p.Deduction).ToString("N2")</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm bg-white h-100 rounded-4 border-start border-info border-5">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase text-muted small fw-bold">Active Records</h6>
+                    <h2 class="fw-bold mb-0 text-dark">@Model.Count()</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 bg-white">
+                <thead class="table-dark"> <tr>
+                        <th class="ps-4 py-3">ID</th>
+                        <th>Employee</th>
+                        <th>Pay Date</th>
+                        <th class="text-center">Days</th>
+                        <th>Gross Pay</th>
+                        <th>Deductions</th>
+                        <th>Net Pay</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                    <tr>
+                        <td class="ps-4 text-muted small">#@item.PayrollID</td>
+                        <td>
+                            <div class="fw-bold text-dark">@item.Employee?.FullName</div>
+                            <div class="text-muted extra-small" style="font-size: 0.75rem;">@item.Employee?.Position</div>
+                        </td>
+                        <td class="text-muted">@item.Date.ToString("MMM dd, yyyy")</td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border px-3">@item.DaysWorked</span>
+                        </td>
+                        <td class="fw-semibold">₱ @item.GrossPay.ToString("N2")</td>
+                        <td class="text-danger">₱ @item.Deduction.ToString("N2")</td>
+                        <td>
+                            <span class="fw-bold text-success">₱ @item.NetPay.ToString("N2")</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <button onclick="openModal('@Url.Action("Details", new { id = item.PayrollID })')" 
+                                   class="btn btn-sm btn-outline-primary border-0" 
+                                   data-bs-toggle="tooltip" title="View Payslip">
+                                   <i class="bi bi-eye-fill fs-5"></i>
+                                </button>
+                                <button onclick="openModal('@Url.Action("Edit", new { id = item.PayrollID })')" 
+                                   class="btn btn-sm btn-outline-warning border-0" 
+                                   data-bs-toggle="tooltip" title="Edit">
+                                   <i class="bi bi-pencil-square fs-5"></i>
+                                </button>
+                                <button onclick="openModal('@Url.Action("Delete", new { id = item.PayrollID })')" 
+                                   class="btn btn-sm btn-outline-danger border-0" 
+                                   data-bs-toggle="tooltip" title="Delete">
+                                   <i class="bi bi-trash3-fill fs-5"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Container -->
+<div class="modal fade" id="payrollModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div id="modalContent" class="modal-content border-0 shadow-lg rounded-4">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openModal(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+                success: function (data) {
+                    $('#modalContent').html(data);
+                    $('#payrollModal').modal('show');
+                },
+                error: function () {
+                    alert("Failed to load form. Please try again.");
+                }
+            });
+        }
+
+        $(document).ajaxComplete(function() {
+            if ($.validator && $.validator.unobtrusive) {
+                $.validator.unobtrusive.parse('form');
+            }
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

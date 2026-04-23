@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TechCore Solutions</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --sidebar-bg: #1a1d21;
+            --sidebar-hover: #2c3136;
+            --accent-blue: #0d6efd;
+        }
+
+        body {
+            overflow-x: hidden;
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Sidebar Styling */
+        #sidebar-wrapper {
+            min-height: 100vh;
+            width: 280px;
+            background: var(--sidebar-bg);
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-heading {
+            padding: 2rem 1.5rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .brand-text {
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* The "Blue" inside the sidebar */
+        .list-group-nav {
+            padding: 1rem; /* Creates the "inset" look */
+        }
+
+        .nav-item-custom {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-radius: 8px; /* Rounded corners for the blue highlight */
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item-custom i {
+            font-size: 1.2rem;
+            width: 25px;
+            margin-right: 12px;
+        }
+
+        .nav-item-custom:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        /* Active State - Blue stays inside the padding */
+        .nav-item-custom.active {
+            background: var(--accent-blue) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        /* Content Area */
+        #page-content-wrapper {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .top-navbar {
+            background: #fff;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #menu-toggle {
+            border: none;
+            background: #f8f9fa;
+            color: #333;
+            border-radius: 6px;
+        }
+
+        #menu-toggle:hover {
+            background: #e2e6ea;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <div class="brand-text d-flex align-items-center">
+                    <div class="bg-primary p-2 rounded-3 me-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                        <i class="bi bi-cpu-fill text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-white mb-0" style="letter-spacing: 1px; font-size: 1.1rem;">TECHCORE</div>
+                        <div class="fw-light text-info small text-uppercase" style="letter-spacing: 2px; font-size: 0.7rem;">SOLUTIONS</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="list-group-nav">
+                <a asp-controller="Home" asp-action="Index" 
+                   class="nav-item-custom @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                </a>
+                
+                <a asp-controller="Employees" asp-action="Index" 
+                   class="nav-item-custom @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Employees" ? "active" : "")">
+                    <i class="bi bi-people-fill"></i> Employees
+                </a>
+                
+                <a asp-controller="Payrolls" asp-action="Index" 
+                   class="nav-item-custom @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Payrolls" ? "active" : "")">
+                    <i class="bi bi-wallet2"></i> Payroll
+                </a>
+                
+                <hr class="text-white-50 my-3">
+                
+                <a asp-controller="Home" asp-action="Privacy" 
+                   class="nav-item-custom @(ViewContext.RouteData.Values["Action"]?.ToString() == "Privacy" ? "active" : "")">
+                    <i class="bi bi-gear-fill"></i> Settings
+                </a>
+            </nav>
+        </div>
+
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg top-navbar">
+                <div class="container-fluid">
+                    <button id="menu-toggle" class="btn p-2">
+                        <i class="bi bi-text-indent-left fs-4"></i>
+                    </button>
+                    <div class="ms-auto d-flex align-items-center">
+                        <span class="text-muted small me-3">Welcome, Admin</span>
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-4">
+                <main role="main">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            // Switch icon on toggle
+            $(this).find('i').toggleClass('bi-text-indent-left bi-text-indent-right');
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

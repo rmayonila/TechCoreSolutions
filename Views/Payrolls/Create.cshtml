@@ -1,0 +1,63 @@
+@model TechCoreSolutions.Models.Payroll
+
+@{
+    ViewData["Title"] = "Create Payroll";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1>Add New Payroll Record</h1>
+            <br />
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label for="EmployeeID" class="form-label">Employee</label>
+                    <select id="EmployeeID" name="EmployeeID" class="form-control" required>
+                        <option value="">-- Select Employee --</option>
+                        @foreach (var employee in ViewBag.Employees ?? new List<dynamic>())
+                        {
+                            <option value="@employee.EmployeeID">@employee.FullName</option>
+                        }
+                    </select>
+                    <span asp-validation-for="EmployeeID" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Date" class="form-label"></label>
+                    <input asp-for="Date" class="form-control" type="date" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DaysWorked" class="form-label"></label>
+                    <input asp-for="DaysWorked" class="form-control" type="number" min="0" max="31" />
+                    <span asp-validation-for="DaysWorked" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Deduction" class="form-label"></label>
+                    <input asp-for="Deduction" class="form-control" type="number" min="0" step="0.01" />
+                    <span asp-validation-for="Deduction" class="text-danger"></span>
+                </div>
+
+                <div class="alert alert-info" role="alert">
+                    <strong>Note:</strong> Gross Pay will be calculated automatically (Days Worked × Employee's Daily Rate)<br />
+                    Net Pay = Gross Pay - Deduction
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success">Add Payroll</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

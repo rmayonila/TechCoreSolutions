@@ -1,0 +1,125 @@
+@model IEnumerable<TechCoreSolutions.Models.Payroll>
+
+@{
+    ViewData["Title"] = "Payroll History";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-primary mb-0">Payroll History</h1>
+            <p class="text-muted">Employee: <span class="fw-bold text-dark">@ViewData["EmployeeName"]</span></p>
+        </div>
+        <div class="btn-group shadow-sm rounded-pill overflow-hidden">
+            <button onclick="openModal('@Url.Action("Create")')" class="btn btn-success px-4">
+                <i class="bi bi-plus-circle-fill me-2"></i> Add Record
+            </button>
+            <a asp-controller="Employees" asp-action="Index" class="btn btn-outline-secondary px-4">
+                Back to Employees
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4 py-3">Date</th>
+                        <th class="text-center">Days Worked</th>
+                        <th>Gross Pay</th>
+                        <th>Deductions</th>
+                        <th>Net Pay</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                    <tr>
+                        <td class="ps-4 text-muted fw-semibold">@item.Date.ToString("MMM dd, yyyy")</td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border px-3">@item.DaysWorked</span>
+                        </td>
+                        <td class="fw-semibold text-dark">₱ @item.GrossPay.ToString("N2")</td>
+                        <td class="text-danger">₱ @item.Deduction.ToString("N2")</td>
+                        <td>
+                            <span class="fw-bold text-success">₱ @item.NetPay.ToString("N2")</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group">
+                                <button onclick="openModal('@Url.Action("Details", new { id = item.PayrollID })')" 
+                                   class="btn btn-sm btn-outline-primary border-0" 
+                                   data-bs-toggle="tooltip" title="View Payslip">
+                                   <i class="bi bi-eye-fill fs-5"></i>
+                                </button>
+                                <button onclick="openModal('@Url.Action("Edit", new { id = item.PayrollID })')" 
+                                   class="btn btn-sm btn-outline-warning border-0" 
+                                   data-bs-toggle="tooltip" title="Edit">
+                                   <i class="bi bi-pencil-square fs-5"></i>
+                                </button>
+                                <button onclick="openModal('@Url.Action("Delete", new { id = item.PayrollID })')" 
+                                   class="btn btn-sm btn-outline-danger border-0" 
+                                   data-bs-toggle="tooltip" title="Delete">
+                                   <i class="bi bi-trash3-fill fs-5"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    @if (!Model.Any()) {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                                No payroll records found for this employee.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Container -->
+<div class="modal fade" id="payrollModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div id="modalContent" class="modal-content border-0 shadow-lg rounded-4">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openModal(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+                success: function (data) {
+                    $('#modalContent').html(data);
+                    $('#payrollModal').modal('show');
+                },
+                error: function () {
+                    alert("Failed to load form. Please try again.");
+                }
+            });
+        }
+
+        $(document).ajaxComplete(function() {
+            if ($.validator && $.validator.unobtrusive) {
+                $.validator.unobtrusive.parse('form');
+            }
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

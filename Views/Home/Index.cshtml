@@ -1,0 +1,171 @@
+@{
+    ViewData["Title"] = "Executive Dashboard";
+}
+
+<div class="container-fluid px-4 py-4">
+    <!-- Welcome Section with Gradient -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 rounded-4 shadow-sm overflow-hidden" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);">
+                <div class="card-body p-5 position-relative">
+                    <div class="row align-items-center position-relative" style="z-index: 2;">
+                        <div class="col-md-8 text-white">
+                            <h1 class="display-4 fw-bold mb-2">Welcome Back, Admin</h1>
+                            <p class="lead opacity-75 mb-4">Monitor your workforce and payroll operations in real-time. Everything is running smoothly today.</p>
+                            <div class="d-flex gap-3">
+                                <a asp-controller="Employees" asp-action="Index" class="btn btn-white btn-lg px-4 rounded-pill fw-bold text-primary shadow-sm" style="background: white;">Manage Staff</a>
+                                <a asp-controller="Payrolls" asp-action="Index" class="btn btn-outline-white btn-lg px-4 rounded-pill fw-bold border-2" style="color: white; border-color: rgba(255,255,255,0.5);">View Payouts</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Decorative Circles -->
+                    <div class="position-absolute rounded-circle bg-white opacity-10" style="width: 300px; height: 300px; top: -100px; right: -50px;"></div>
+                    <div class="position-absolute rounded-circle bg-white opacity-10" style="width: 150px; height: 150px; bottom: -50px; left: -30px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white hover-up">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary-subtle text-primary p-3 rounded-4 me-3">
+                            <i class="bi bi-people-fill fs-3"></i>
+                        </div>
+                        <h6 class="text-uppercase text-muted fw-bold small mb-0">Total Workforce</h6>
+                    </div>
+                    <h2 class="display-6 fw-bold text-dark mb-1">@ViewBag.EmployeeCount</h2>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar bg-primary rounded-pill" style="width: 75%"></div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0">Active staff members across all departments</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white hover-up">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success-subtle text-success p-3 rounded-4 me-3">
+                            <i class="bi bi-currency-dollar fs-3"></i>
+                        </div>
+                        <h6 class="text-uppercase text-muted fw-bold small mb-0">Total Net Payout</h6>
+                    </div>
+                    <h2 class="display-6 fw-bold text-dark mb-1">₱ @ViewBag.TotalPayroll.ToString("N2")</h2>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar bg-success rounded-pill" style="width: 60%"></div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0">Total cumulative net salary disbursement</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white hover-up">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-info-subtle text-info p-3 rounded-4 me-3">
+                            <i class="bi bi-activity fs-3"></i>
+                        </div>
+                        <h6 class="text-uppercase text-muted fw-bold small mb-0">System Status</h6>
+                    </div>
+                    <h2 class="display-6 fw-bold text-dark mb-1">Healthy</h2>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar bg-info rounded-pill" style="width: 100%"></div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0">Operational | Connection Secured</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Activity Table -->
+        <div class="col-xl-8">
+            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark">Recent Payroll History</h5>
+                    <a asp-controller="Payrolls" asp-action="Index" class="btn btn-sm btn-light border fw-bold px-3 py-2 rounded-pill shadow-xs">
+                        View All <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-4 border-0 py-3">Employee</th>
+                                <th class="border-0">Date</th>
+                                <th class="text-end pe-4 border-0">Net Pay</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.RecentPayrolls)
+                            {
+                                <tr>
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3 fw-bold" style="width: 40px; height: 40px;">
+                                                @(item.Employee?.FirstName?.Substring(0,1))@(item.Employee?.LastName?.Substring(0,1))
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark">@item.Employee?.FullName</div>
+                                                <div class="text-muted extra-small" style="font-size: 0.75rem;">@item.Employee?.Position</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-muted">@item.Date.ToString("MMM dd, yyyy")</td>
+                                    <td class="text-end pe-4">
+                                        <span class="fw-bold text-success">₱ @item.NetPay.ToString("N2")</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Controls -->
+        <div class="col-xl-4">
+            <div class="card border-0 shadow-sm rounded-4 bg-white mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-4">Quick Operations</h5>
+                    <div class="d-grid gap-3">
+                        <button onclick="location.href='@Url.Action("Create", "Employees")'" class="btn btn-primary py-3 rounded-4 shadow-sm border-0 d-flex align-items-center px-4">
+                            <div class="bg-white bg-opacity-25 rounded-3 p-2 me-3">
+                                <i class="bi bi-person-plus-fill fs-5"></i>
+                            </div>
+                            <div class="text-start">
+                                <div class="fw-bold">Register Staff</div>
+                                <div class="extra-small opacity-75" style="font-size: 0.7rem;">Onboard new employee</div>
+                            </div>
+                        </button>
+                        <button onclick="location.href='@Url.Action("Create", "Payrolls")'" class="btn btn-dark py-3 rounded-4 shadow-sm border-0 d-flex align-items-center px-4">
+                            <div class="bg-white bg-opacity-10 rounded-3 p-2 me-3">
+                                <i class="bi bi-cash-stack fs-5"></i>
+                            </div>
+                            <div class="text-start">
+                                <div class="fw-bold">Process Pay</div>
+                                <div class="extra-small opacity-75" style="font-size: 0.7rem;">Generate salary records</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-up { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .btn-white:hover { background-color: #f8f9fa !important; color: #0a58ca !important; }
+    .extra-small { font-size: 0.75rem; }
+    .bg-primary-subtle { background-color: rgba(13, 110, 253, 0.1); }
+    .bg-success-subtle { background-color: rgba(25, 135, 84, 0.1); }
+    .bg-info-subtle { background-color: rgba(13, 202, 240, 0.1); }
+</style>

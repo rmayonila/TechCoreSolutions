@@ -1,0 +1,30 @@
+@model TechCoreSolutions.Models.Employee
+
+<div class="modal-body p-5 text-center">
+    <div class="mb-4">
+        <i class="bi bi-exclamation-octagon text-danger" style="font-size: 5rem;"></i>
+    </div>
+    
+    <h3 class="fw-bold text-dark">Are you sure?</h3>
+    <p class="text-muted mb-0">You are about to permanently delete</p>
+    <h5 class="fw-bold text-primary mt-1 mb-4">@Model.FullName</h5>
+    
+    <div class="bg-light p-3 rounded-4 mb-4 small text-start border border-dashed">
+        <div class="d-flex justify-content-between mb-1">
+            <span>Position:</span> <span class="fw-bold text-dark">@Model.Position</span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span>Department:</span> <span class="fw-bold text-dark">@Model.Department</span>
+        </div>
+    </div>
+
+    <p class="small text-danger fw-bold"><i class="bi bi-info-circle me-1"></i> This action cannot be undone.</p>
+</div>
+
+<div class="modal-footer justify-content-center border-0 pb-5">
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="EmployeeID" />
+        <button type="button" class="btn btn-light px-4 me-2 rounded-pill fw-bold" data-bs-dismiss="modal">No, Keep it</button>
+        <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold shadow-sm">Yes, Delete Employee</button>
+    </form>
+</div>

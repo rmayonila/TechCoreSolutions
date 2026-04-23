@@ -1,0 +1,48 @@
+@model TechCoreSolutions.Models.Employee
+
+<div class="modal-header bg-primary text-white border-0">
+    <h5 class="modal-title">Employee File: @Model.FullName</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body p-0">
+    <div class="p-4 text-center bg-primary text-white">
+        <div class="rounded-circle bg-white text-primary d-inline-flex align-items-center justify-content-center mb-2" style="width: 70px; height: 70px;">
+            <i class="bi bi-person-fill fs-1"></i>
+        </div>
+        <h4 class="mb-0">@Model.FullName</h4>
+        <span class="opacity-75">@Model.Position | @Model.Department</span>
+    </div>
+    <div class="p-4">
+        <div class="row text-center mb-4">
+            <div class="col-6 border-end">
+                <small class="text-muted d-block">Daily Rate</small>
+                <span class="fw-bold fs-5">₱@Model.DailyRate.ToString("N2")</span>
+            </div>
+            <div class="col-6">
+                <small class="text-muted d-block">Employee ID</small>
+                <span class="fw-bold fs-5">#@Model.EmployeeID</span>
+            </div>
+        </div>
+        <h6 class="fw-bold border-bottom pb-2"><i class="bi bi-clock-history me-2"></i>Recent Payrolls</h6>
+        <div class="table-responsive" style="max-height: 200px;">
+            <table class="table table-sm small">
+                @if (Model.Payrolls != null && Model.Payrolls.Any()) {
+                    @foreach (var p in Model.Payrolls.OrderByDescending(x => x.Date).Take(3)) {
+                        <tr>
+                            <td>@p.Date.ToShortDateString()</td>
+                            <td class="text-end fw-bold">₱@p.NetPay.ToString("N2")</td>
+                        </tr>
+                    }
+                } else {
+                    <tr>
+                        <td colspan="2" class="text-center text-muted py-2">No payroll history found.</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer border-0">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+    <a asp-controller="Payrolls" asp-action="Create" asp-route-id="@Model.EmployeeID" class="btn btn-primary">Process Pay</a>
+</div>

@@ -1,0 +1,42 @@
+@model TechCoreSolutions.Models.Payroll
+
+@{
+    ViewData["Title"] = "Delete Payroll";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h3>Delete Payroll Record</h3>
+            <hr />
+            <div class="alert alert-danger" role="alert">
+                Are you sure you want to delete this payroll record?
+            </div>
+            <dl class="row">
+                <dt class="col-sm-3">Employee</dt>
+                <dd class="col-sm-9">@Model.Employee?.FullName</dd>
+
+                <dt class="col-sm-3">Date</dt>
+                <dd class="col-sm-9">@Model.Date.ToString("MM/dd/yyyy")</dd>
+
+                <dt class="col-sm-3">Days Worked</dt>
+                <dd class="col-sm-9">@Model.DaysWorked</dd>
+
+                <dt class="col-sm-3">Gross Pay</dt>
+                <dd class="col-sm-9">₱ @Model.GrossPay.ToString("N2")</dd>
+
+                <dt class="col-sm-3">Deduction</dt>
+                <dd class="col-sm-9">₱ @Model.Deduction.ToString("N2")</dd>
+
+                <dt class="col-sm-3">Net Pay</dt>
+                <dd class="col-sm-9"><strong>₱ @Model.NetPay.ToString("N2")</strong></dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="PayrollID" />
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a asp-action="ByEmployee" asp-route-id="@Model.EmployeeID" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
